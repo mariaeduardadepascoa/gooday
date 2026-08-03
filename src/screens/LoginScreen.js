@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 
 export default function LoginScreen() {
     <View style={styles.container}>
-        <Image source={require('../assets/logotipo.png')} style={styles.image} />
+        <Image source={require('../imagens/logotipo.png')} style={styles.image} />
     </View>
 }
 
