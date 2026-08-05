@@ -5,14 +5,14 @@ import { useState } from 'react';
 import { color } from '../theme/colors';
 import { typography } from '../theme/typography';
 
-export default function LoginScreen({ navigation }) {
-    const [verificada, setVerificada] = useState(false);
-
+export default function RegisterScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [usuarioLogado, setUsuarioLogado] = useState();
-    const [usuarioNaoLogado, setusuarioNaoLogado] = useState();
-    const [inputVazio, setInputVazio] = useState();
+    const [senhaConfirmada, setSenhaConfirmada] = useState('');
+    const [senhaErrada, setSenhaErrada] = useState('');
+    const [inputVazio, setInputVazio] = useState('');
+    const [usuario, setUsuario] = useState('');
+    const [novoUsuario, setNovoUsuario] = useState('');
 
     const users = [
         {
@@ -31,24 +31,36 @@ export default function LoginScreen({ navigation }) {
         },
     ]
 
+    function verificarNovoUser(email, senha) {
 
-    function verificarUser(email, senha) {
-
-        if (email === '' && senha === '') { //verifica se algum campo esta vazio
+        if (email === '' && senha === '') {
             console.log("inputs vazios");
             setInputVazio(true);
             return;
         }
 
+        if (senha !== senhaConfirmada) {
+            console.log("senha errada");
+            setSenhaErrada(true);
+            setSenha('');
+            setSenhaConfirmada('');
+            return;
+        }
+
         const user = users.find(user => user.email === email && user.senha === senha);
+
         if (user) {
-            console.log("logou");
-            setUsuarioLogado(true);
-        } else if (!user) {
-            console.log("Usuário não autorizado");
-            setusuarioNaoLogado(true);
+            console.log("Esse usuário já existe.");
+            setUsuario(true);
+            return;
         } else {
-            console.log("outro erro");
+            const novoUser = {
+                "email": email,
+                "senha": senha,
+            }
+            users.push(novoUser);
+            setNovoUsuario(true);
+            console.log(users);
         }
 
     }
@@ -60,8 +72,8 @@ export default function LoginScreen({ navigation }) {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Image source={require('../imagens/icon-icons-green.png')} style={{ width: 40, height: 40 }} />
                     </TouchableOpacity>
-                    <Text style={styles.title}>Acesse</Text>
-                    <Text style={styles.subtitle}>com E-mail e Senha</Text>
+                    <Text style={styles.title}>Cadastro</Text>
+                    <Text style={styles.subtitle}>Informe seu E-mail e crie uma conta</Text>
                 </View>
 
                 <View style={styles.mainContent}>
@@ -77,7 +89,7 @@ export default function LoginScreen({ navigation }) {
                     </View>
 
                     <View style={styles.inputsContainer}>
-                        <Text style={styles.titleInput}>Senha</Text>
+                        <Text style={styles.titleInput}>Crie uma senha</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Digite sua Senha"
@@ -86,27 +98,22 @@ export default function LoginScreen({ navigation }) {
                             onChangeText={setSenha}
                         />
                     </View>
+
+                    <View style={styles.inputsContainer}>
+                        <Text style={styles.titleInput}>Confirme sua senha</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Digite sua Senha"
+                            value={senhaConfirmada}
+                            placeholderTextColor={color.ligthBluePlaceholders}
+                            onChangeText={setSenhaConfirmada}
+                        />
+                    </View>
                 </View>
 
-                <View style={styles.passwordContainer}>
-                    <View style={styles.rememerberPasswordContainer}>
-                        <Checkbox
-                            style={styles.boxRememberPassword}
-                            value={verificada}
-                            onValueChange={setVerificada}
-                            color={verificada ? color.greenPrimary : color.white}
-                        >
-                        </Checkbox>
-                        <Text style={styles.titleInput}>Lembrar senha</Text>
-                    </View>
-                    <Text style={styles.titleInput}>Esqueci minha senha</Text>
-                </View>
-                <View style={styles.mainButtons}>
-                    <TouchableOpacity style={styles.accessButton} onPress={() => verificarUser(email, senha)}>
+                <View style={styles.mainButton}>
+                    <TouchableOpacity style={styles.accessButton} onPress={() => verificarNovoUser(email, senha)}>
                         <Text style={styles.titlesButton}>Acessar</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.createAccountButton} onPress={()=>navigation.navigate("RegisterScreen")}>
-                        <Text style={styles.titlesButton2}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -125,24 +132,26 @@ export default function LoginScreen({ navigation }) {
                     </View>
                 </View>
 
-                {usuarioLogado && (
-                    <View style={styles.popUp}>
-                        <Text style={styles.titlesButton}>Você logou no Gooday.</Text>
-                    </View>
-                )}
-
-                {!usuarioLogado && usuarioNaoLogado && (
-                    <View style={styles.popUp2}>
-                        <Text style={styles.titlesButton}>Sua conta não existe no Gooday.</Text>
-                    </View>
-                )}
-
                 {inputVazio && (
                     <View style={styles.popUp3}>
                         <Text style={styles.titlesButton}>Por favor, insira todos os dados.</Text>
                     </View>
                 )}
-
+                {usuario && (
+                    <View style={styles.popUp2}>
+                        <Text style={styles.titlesButton}>Esse usuário já existe.</Text>
+                    </View>
+                )}
+                {senhaErrada && (
+                    <View style={styles.popUp2}>
+                        <Text style={styles.titlesButton}>As duas senhas devem ser iguais.</Text>
+                    </View>
+                )}
+                {novoUsuario && (
+                    <View style={styles.popUp}>
+                        <Text style={styles.titlesButton}>Usuário criado com sucesso.</Text>
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -161,7 +170,7 @@ const styles = StyleSheet.create({
         backgroundColor: color.white,
         justifyContent: 'center',
         position: 'relative',
-        gap: 30,
+        gap: 20,
 
     },
     title: {
@@ -188,31 +197,9 @@ const styles = StyleSheet.create({
     mainContent: {
         gap: 20,
     },
-    passwordContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    rememerberPasswordContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    boxRememberPassword: {
-        width: 25,
-        height: 25,
-        borderColor: color.greenPrimary,
-        borderRadius: 5,
-        borderWidth: 2,
-    },
-    mainButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
     accessButton: {
         backgroundColor: color.greenPrimary,
-        width: '48%',
+        width: '100%',
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',

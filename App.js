@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import AcessOptionScreen from './src/screens/AcessOptionScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,6 +14,7 @@ export default function App() {
     <Stack.Navigator initialRouteName='AcessOptions'>
       <Stack.Screen name='AcessOptions' component={AcessOptionScreen} options={{ headerShown: false }} />
       <Stack.Screen name='Login' component={LoginScreen} options={{ headerShown: false }} />
+      <Stack.Screen name='RegisterScreen' component={RegisterScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
     </NavigationContainer>
   );
