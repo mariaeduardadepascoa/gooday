@@ -1,16 +1,16 @@
 export const typography = {
     title: {
         'fontSize': 35,
-        'fontWeight': '700',
+        'fontWeight': '640',
     },
 
     subtitle: {
         'fontSize': 14,
-        'fontWeight': '500',
+        'fontWeight': '640',
     },
 
     body: {
         'fontSize': 14,
-        'fontWeight': '300',
+        'fontWeight': '400',
     },
 };
